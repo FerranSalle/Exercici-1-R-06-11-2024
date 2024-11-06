@@ -74,3 +74,18 @@ e <- AUC::specificity(pr,test$y)
 a <- AUC::accuracy(pr,test$y)
 df <- data.frame(cutpoints=s$cutoffs,sens=s$measure,esp=e$measure,acc=a$measure)
 View(round(df,3))
+
+## Ideas de mejora
+#Al hacer el modleo anteiror hemos visto poco significativas las columnas anteriores. 
+# Por lo tanto, las hemos eliminado del modelo
+# Modelo glm sin las variables num.credit, num.people, employed.time, residence.time, housing, telephone
+mod.glm1 <- glm(y ~ . - num.credits - num.people - employed.time - residence.time - housing - telephone, data = datos, family = binomial)
+summary(mod.glm1)
+
+#Model Evaluation
+pr <- predict(mod.glm1, datos, type = "response") # predicted probabilities of y=1
+roc_curve <- roc(pr, datos$y) # create ROC curve
+plot(roc_curve) # plot ROC curve
+AUC::auc(roc_curve) # calculate AUC
+
+#Aun eliminar las columnas, el AUC nos da el mismo valor.
